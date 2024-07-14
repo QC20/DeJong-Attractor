@@ -3,88 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>de Jong Attractor II (Grayscale)</title>
-    <style>
-        html, body { 
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background: #222;
-        }
-        #canvas {
-            display: block;
-        }
-    </style>
+    <title>de Jong Attractor</title>
+    <link rel="stylesheet" href="src/styles/styles.css">
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-
-    <script id="vertexShader" type="x-shader/x-vertex">
-        attribute vec2 a_position;
-        uniform float u_a;
-        uniform float u_b;
-        uniform float u_c;
-        uniform float u_d;
-        
-        void main() {
-            vec2 p = a_position;
-            for (int i = 0; i < 100; i++) {
-                float x = sin(u_a * p.y) - cos(u_b * p.x);
-                float y = sin(u_c * p.x) - cos(u_d * p.y);
-                p = vec2(x, y);
-            }
-            gl_Position = vec4(p * 0.5, 0.0, 1.0);
-            gl_PointSize = 1.0;
-        }
-    </script>
-
-    <script id="fragmentShader" type="x-shader/x-fragment">
-        precision mediump float;
-        
-        void main() {
-            float intensity = (gl_FragCoord.x + gl_FragCoord.y) / 2000.0;
-            gl_FragColor = vec4(intensity, intensity, intensity, 1.0);
-        }
-    </script>
-
-    <script type="module">
-        import * as i2d from "https://i2djs.github.io/I2Djs/dist/i2d.esm.min.js";
-        
-        try {
-            var webglRenderer = i2d.webglLayer('#canvas', {}, {});
-            var a = -2;
-            var b = -2;
-            var c = -1.2;
-            var d = 2;
-            var n = Math.pow(2, 18);
-
-            var geome = webglRenderer.PointsGeometry();
-            geome.setAttr('a_position', {
-                value: new Float32Array(n * 2).map(() => Math.random() * 2 - 1),
-                size: 2
-            });
-            geome.setDrawRange(0, n);
-
-            var shaderRef = webglRenderer.createShaderEl({
-                fragmentShader: document.getElementById('fragmentShader').textContent,
-                vertexShader: document.getElementById('vertexShader').textContent,
-                uniforms: {
-                    u_a: { value: a.toFixed(2) },
-                    u_b: { value: b.toFixed(2) },
-                    u_c: { value: c.toFixed(2) },
-                    u_d: { value: d.toFixed(2) }
-                },
-                geometry: geome
-            });
-
-            i2d.queue.onRequestFrame(function (t) {
-                shaderRef.setUniformData('u_a', -2.0 + Math.sin(t / 8000));
-            });
-        } catch (error) {
-            console.error("An error occurred:", error);
-            document.body.innerHTML = `<p>An error occurred: ${error.message}</p>`;
-        }
-    </script>
+    <canvas id="glcanvas"></canvas>
+    <script src="src/javascript/shaders.js"></script>
+    <script src="src/javascript/script.js"></script>
 </body>
 </html>
